@@ -99,6 +99,16 @@ impl<T: SigType> SigningKey<T> {
         SigningKey { sk, pk }
     }
 
+    /// Generate a dummy key that will always look the same.
+    pub fn const_dummy() -> SigningKey<T> {
+        let sk = {
+            let bytes = [42; 64];
+            T::Scalar::from_bytes_wide(&bytes)
+        };
+        let pk = VerificationKey::from(&sk);
+        SigningKey { sk, pk }
+    }
+
     /// Create a signature of type `T` on `msg` using this `SigningKey`.
     // Similar to signature::Signer but without boxed errors.
     pub fn sign<R: RngCore + CryptoRng>(&self, mut rng: R, msg: &[u8]) -> Signature<T> {
